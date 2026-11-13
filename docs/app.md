@@ -46,4 +46,4 @@ python3 -m venv .venv
 
 > Reproduce la metodología del informe. La ingeniería de características evaluada
 > (y descartada por no aportar al modelo elegido) se documenta en `informe.md` §3. Nota: `data/Cliente.csv` no se versiona
-> (ver `data/README.md`).
+> (ver `data.md`).

@@ -37,7 +37,7 @@ El dataset Cliente fue indicado expresamente para esta tarea. La consigna del PD
 
 ## 2. Datos y variables
 
-Origen: `Tema - Cliente/Cliente.7z`, incluido en `TP 1 - Machine Learning.zip`. Se extrajo su único CSV conservando exactamente los bytes: **7.043 registros y 21 columnas**. La huella SHA-256 y las instrucciones de obtención se encuentran en `data/README.md`. No se descargaron datos sustitutos.
+Origen: `Tema - Cliente/Cliente.7z`, incluido en `TP 1 - Machine Learning.zip`. Se extrajo su único CSV conservando exactamente los bytes: **7.043 registros y 21 columnas**. La huella SHA-256 y las instrucciones de obtención se encuentran en `docs/data.md`. No se descargaron datos sustitutos.
 
 Es un **único dataset** (una sola tabla); la cátedra no entrega archivos separados de entrenamiento y prueba. La **unidad de análisis es el cliente**: cada fila describe a un cliente con 20 atributos más la etiqueta `Churn`. La tabla siguiente describe **qué mide o indica cada variable** y cómo se guarda en el CSV; el tratamiento posterior (codificación, escala, imputación) se detalla en la §3.
 
@@ -283,6 +283,6 @@ Materiales locales revisados:
 
 `Clase 6.pdf` trata Desarrollo de Aplicaciones II (integración y microservicios), no este tema, y no se usa como base metodológica. Para el detalle exacto de la implementación se pueden consultar los docstrings instalados de scikit-learn, coherentes con las versiones registradas.
 
-Además, en `app/` se incluye una **aplicación Streamlit** (`streamlit run app/main.py`) que muestra el AED en la página principal y permite **cambiar de modelo** para entrenarlo y evaluarlo con la misma metodología. Su lógica está separada por responsabilidad: `carga`, `limpieza`, `procesamiento`, `aed` y un archivo por modelo en `app/src/modelos/`. Ver `app/README.md`.
+Además, en `app/` se incluye una **aplicación Streamlit** (`streamlit run app/main.py`) que muestra el AED en la página principal y permite **cambiar de modelo** para entrenarlo y evaluarlo con la misma metodología. Su lógica está separada por responsabilidad: `carga`, `limpieza`, `procesamiento`, `aed` y un archivo por modelo en `app/src/modelos/`. Ver `docs/app.md`.
 
 La notebook, la app y la guía oral constituyen soporte para la exposición. Quedan a cargo del grupo la revisión personal y entregar el código y soporte en WebCampus.
