@@ -1,0 +1,22 @@
+variable,tipo_csv,rol,tipo_modelado,valores_distintos_train,faltantes_train
+customerID,str,identificador excluido,categórica,,
+gender,str,predictora,categórica,2.0,0.0
+SeniorCitizen,int64,predictora,categórica,2.0,0.0
+Partner,str,predictora,categórica,2.0,0.0
+Dependents,str,predictora,categórica,2.0,0.0
+tenure,int64,predictora,numérica,73.0,0.0
+PhoneService,str,predictora,categórica,2.0,0.0
+MultipleLines,str,predictora,categórica,3.0,0.0
+InternetService,str,predictora,categórica,3.0,0.0
+OnlineSecurity,str,predictora,categórica,3.0,0.0
+OnlineBackup,str,predictora,categórica,3.0,0.0
+DeviceProtection,str,predictora,categórica,3.0,0.0
+TechSupport,str,predictora,categórica,3.0,0.0
+StreamingTV,str,predictora,categórica,3.0,0.0
+StreamingMovies,str,predictora,categórica,3.0,0.0
+Contract,str,predictora,categórica,3.0,0.0
+PaperlessBilling,str,predictora,categórica,2.0,0.0
+PaymentMethod,str,predictora,categórica,4.0,0.0
+MonthlyCharges,float64,predictora,numérica,1489.0,0.0
+TotalCharges,str,predictora,numérica,5275.0,8.0
+Churn,str,objetivo,categórica,,

@@ -1,0 +1,39 @@
+# Entornos virtuales
+venv/
+.venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+
+# Jupyter / caches
+.ipynb_checkpoints/
+.jupyter/
+.cache/
+.tmp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
+
+# Datos de la cátedra: no redistribuir (ver data/README.md)
+data/Cliente.csv
+data/*.csv
+_materiales_locales/
+*.zip
+*.7z
+*.rar
+
+# NOTA: la carpeta resultados/ (CSV, JSON y PNG) SÍ se versiona: son entregables.
+# La carpeta app/ (código de la app Streamlit) SÍ se versiona.

@@ -1,0 +1,14 @@
+# Python 3.13; versiones usadas en la ejecución verificada.
+numpy==2.5.4
+pandas==3.0.6
+scipy==1.18.1
+scikit-learn==1.9.1
+joblib==1.6.0
+threadpoolctl==3.7.0
+matplotlib==3.11.2
+notebook==7.6.3
+nbformat==5.11.1
+nbclient==0.11.0
+ipykernel==7.4.0
+jupyter-client==8.10.0
+py7zr==1.1.4
