@@ -1,6 +1,6 @@
 # Datos originales de Cliente
 
-Este directorio debe contener `Cliente.csv`. El CSV se excluye de Git; no hace falta descargarlo de otra fuente.
+Este directorio contiene `Cliente.csv` (dataset público Telco Churn), versionado para que la app y el deploy arranquen sin pasos previos. Si se quisiera regenerar desde el material original de la cátedra, seguir los pasos de abajo.
 
 1. Obtener de WebCampus/cátedra el ZIP original `TP 1 - Machine Learning.zip`.
 2. Ubicarlo en `TP1/_materiales_locales/` (también excluido de Git).

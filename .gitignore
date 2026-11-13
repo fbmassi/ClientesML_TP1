@@ -27,9 +27,10 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Datos de la cátedra: no redistribuir (ver data/README.md)
-data/Cliente.csv
+# Datos: se versiona Cliente.csv (dataset público Telco Churn) para que el deploy
+# arranque solo; el resto de CSV y los materiales originales quedan fuera.
 data/*.csv
+!data/Cliente.csv
 _materiales_locales/
 *.zip
 *.7z

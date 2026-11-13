@@ -270,7 +270,7 @@ Antes de otro experimento habría que definir horizonte, fecha de observación y
 
 El README contiene comandos de Windows 11 para crear el entorno, extraer Cliente, ejecutar la notebook y correr pruebas. `requirements.txt` fija las dependencias principales y numéricas; las versiones efectivamente usadas se guardan en `resultados/experimento.json`. La notebook ejecuta todos los pasos y comparte funciones con la versión de consola, sin cargar métricas preexistentes.
 
-Se guardan CSV de validación, selección y prueba, predicciones sin IDs para recalcular métricas, controles e índices de la partición, métricas por clase, matrices, curvas y figuras. No se guardan modelos grandes ni datos originales en Git. `test_verificaciones.py` comprueba datos, separación/folds, ajuste de transformaciones solo con entrenamiento, métricas recalculadas, elección por CV y ejecución íntegra de la notebook.
+Se guardan CSV de validación, selección y prueba, predicciones sin IDs para recalcular métricas, controles e índices de la partición, métricas por clase, matrices, curvas y figuras. No se guardan modelos entrenados grandes en Git; el `Cliente.csv` (dataset público Telco Churn) sí se versiona para que la app y el deploy funcionen sin pasos previos. `test_verificaciones.py` comprueba datos, separación/folds, ajuste de transformaciones solo con entrenamiento, métricas recalculadas, elección por CV y ejecución íntegra de la notebook.
 
 Materiales locales revisados:
 
