@@ -22,9 +22,12 @@ st.set_page_config(page_title="TP1 ML · Churn Cliente", layout="wide")
 
 @st.cache_data(show_spinner=False)
 def cargar():
-    raw = carga.cargar_crudo()
-    datos = limpieza.limpiar(raw)
-    return raw, datos
+    """Carga desde data/Cliente.csv; devuelve (None, None) si no está en el servidor."""
+    try:
+        raw = carga.cargar_crudo()
+    except FileNotFoundError:
+        return None, None
+    return raw, limpieza.limpiar(raw)
 
 
 @st.cache_data(show_spinner="Entrenando y evaluando…")
@@ -40,6 +43,20 @@ st.caption("Inteligencia Artificial · 2C 2026 · Prof. Parkinson · "
            "Equipo 8: Massi (1156946), Nari (1165816), Vanore (1179980)")
 
 raw, datos = cargar()
+if raw is None:
+    st.warning("No se encontró `data/Cliente.csv` en el servidor "
+               "(el dataset de la cátedra no se versiona). Subí el archivo para continuar.")
+    subido = st.file_uploader("Subí Cliente.csv", type=["csv"])
+    if subido is None:
+        st.info("Esperando el archivo **Cliente.csv** para iniciar la app…")
+        st.stop()
+    raw = carga.cargar_desde_bytes(subido.getvalue())
+    faltan = carga.faltan_columnas(raw)
+    if faltan:
+        st.error(f"El CSV subido no parece ser el dataset Cliente. Faltan columnas: {faltan}")
+        st.stop()
+    datos = limpieza.limpiar(raw)
+
 meta = carga.resumen_carga(raw)
 c1, c2, c3 = st.columns(3)
 c1.metric("Clientes", meta["filas"])

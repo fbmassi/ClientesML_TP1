@@ -45,5 +45,12 @@ python3 -m venv .venv
   confusión, curva ROC, brecha de sobreajuste (train–CV) y ventajas/limitaciones.
 
 > Reproduce la metodología del informe. La ingeniería de características evaluada
-> (y descartada por no aportar al modelo elegido) se documenta en `informe.md` §3. Nota: `data/Cliente.csv` no se versiona
+> (y descartada por no aportar al modelo elegido) se documenta en `informe.md` §3.
+
+## Deploy (Streamlit Cloud)
+
+El dataset de la cátedra **no se versiona**, así que en un deploy no está el
+`Cliente.csv`. La app lo detecta y muestra un **cargador de archivos**: subí
+`Cliente.csv` (el dataset Telco Churn) y la app arranca. En local, en cambio,
+toma el archivo de `data/Cliente.csv` automáticamente. Nota: `data/Cliente.csv` no se versiona
 > (ver `data.md`).
