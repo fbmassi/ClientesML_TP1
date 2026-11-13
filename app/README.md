@@ -2,7 +2,7 @@
 
 App para **probar y comparar cada modelo** y ver el **AED** del dataset Cliente.
 La lógica está separada por responsabilidad (igual criterio que el proyecto
-`tpo-sueldos`): carga, limpieza, FE, procesamiento y un archivo por modelo.
+`tpo-sueldos`): carga, limpieza, procesamiento y un archivo por modelo.
 
 ## Estructura
 
@@ -13,7 +13,6 @@ app/
 └── src/
     ├── carga.py             # lee data/Cliente.csv (verifica SHA-256)
     ├── limpieza.py          # tipifica TotalCharges (espacios→NaN), mapea Churn
-    ├── fe.py                # ingeniería de características opcional (3 derivadas)
     ├── procesamiento.py     # split 80/20, preprocesador (ColumnTransformer), CV + evaluación
     ├── aed.py               # análisis exploratorio (estadísticos, chi²/Cramér's V, figuras)
     └── modelos/
@@ -44,8 +43,7 @@ python3 -m venv .venv
   con **StratifiedKFold k=3**, se elige la mejor configuración por **F1-macro**
   y se evalúa en el **test 20%**. Muestra métricas vs baseline, matriz de
   confusión, curva ROC, brecha de sobreajuste (train–CV) y ventajas/limitaciones.
-- **FE opcional:** se puede activar la ingeniería de características evaluada
-  (no mejora al modelo elegido; se deja para experimentar).
 
-> Reproduce la metodología del informe. Nota: `data/Cliente.csv` no se versiona
+> Reproduce la metodología del informe. La ingeniería de características evaluada
+> (y descartada por no aportar al modelo elegido) se documenta en `informe.md` §3. Nota: `data/Cliente.csv` no se versiona
 > (ver `data/README.md`).

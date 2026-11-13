@@ -283,6 +283,6 @@ Materiales locales revisados:
 
 `Clase 6.pdf` trata Desarrollo de Aplicaciones II (integración y microservicios), no este tema, y no se usa como base metodológica. Para el detalle exacto de la implementación se pueden consultar los docstrings instalados de scikit-learn, coherentes con las versiones registradas.
 
-Además, en `app/` se incluye una **aplicación Streamlit** (`streamlit run app/main.py`) que muestra el AED en la página principal y permite **cambiar de modelo** para entrenarlo y evaluarlo con la misma metodología. Su lógica está separada por responsabilidad: `carga`, `limpieza`, `fe`, `procesamiento`, `aed` y un archivo por modelo en `app/src/modelos/`. Ver `app/README.md`.
+Además, en `app/` se incluye una **aplicación Streamlit** (`streamlit run app/main.py`) que muestra el AED en la página principal y permite **cambiar de modelo** para entrenarlo y evaluarlo con la misma metodología. Su lógica está separada por responsabilidad: `carga`, `limpieza`, `procesamiento`, `aed` y un archivo por modelo en `app/src/modelos/`. Ver `app/README.md`.
 
 La notebook, la app y la guía oral constituyen soporte para la exposición. Quedan a cargo del grupo la revisión personal y entregar el código y soporte en WebCampus.

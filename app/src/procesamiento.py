@@ -21,8 +21,6 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold, train_test_sp
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from . import fe as fe_mod
-
 SEED = 42
 NUMERICAS_BASE = ["tenure", "MonthlyCharges", "TotalCharges"]
 CATEGORICAS_BASE = ["gender", "SeniorCitizen", "Partner", "Dependents", "PhoneService",
@@ -31,15 +29,9 @@ CATEGORICAS_BASE = ["gender", "SeniorCitizen", "Partner", "Dependents", "PhoneSe
                     "Contract", "PaperlessBilling", "PaymentMethod"]
 
 
-def construir_features(datos, usar_fe=False, **flags):
-    """Devuelve (df, numericas, categoricas) según se use o no la FE."""
-    numericas, categoricas = list(NUMERICAS_BASE), list(CATEGORICAS_BASE)
-    df = datos
-    if usar_fe:
-        df, nuevas_num, quitar_cat = fe_mod.agregar_fe(datos, **flags)
-        numericas = numericas + nuevas_num
-        categoricas = [c for c in categoricas if c not in quitar_cat]
-    return df, numericas, categoricas
+def construir_features(datos):
+    """Devuelve (df, numericas, categoricas) con el set base de predictores."""
+    return datos, list(NUMERICAS_BASE), list(CATEGORICAS_BASE)
 
 
 def separar(df, predictoras, seed=SEED):
@@ -69,13 +61,13 @@ def _metricas(y, pred, prob):
     }
 
 
-def entrenar_evaluar(datos, modulo_modelo, usar_fe=False, seed=SEED, **flags):
+def entrenar_evaluar(datos, modulo_modelo, seed=SEED):
     """Entrena un modelo con CV, elige la mejor config y evalúa en test.
 
     Devuelve un dict con: métricas de prueba, matriz de confusión, curva ROC,
     resumen de CV, mejores hiperparámetros, brecha train–CV y avisos.
     """
-    df, numericas, categoricas = construir_features(datos, usar_fe=usar_fe, **flags)
+    df, numericas, categoricas = construir_features(datos)
     predictoras = numericas + categoricas
     Xtr, Xte, ytr, yte = separar(df, predictoras, seed)
 
@@ -116,5 +108,5 @@ def entrenar_evaluar(datos, modulo_modelo, usar_fe=False, seed=SEED, **flags):
         "matriz": confusion_matrix(yte, pred, labels=[0, 1]),
         "roc": (fpr, tpr),
         "avisos": avisos,
-        "usar_fe": usar_fe, "predictoras": predictoras,
+        "predictoras": predictoras,
     }

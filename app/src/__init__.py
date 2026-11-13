@@ -1,1 +1,1 @@
-"""Módulos de la app Streamlit del TP1 (carga, limpieza, FE, procesamiento, AED, modelos)."""
+"""Módulos de la app Streamlit del TP1 (carga, limpieza, procesamiento, AED, modelos)."""

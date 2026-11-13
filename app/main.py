@@ -1,7 +1,7 @@
 """TP1 — Machine Learning: clasificación de bajas de clientes (Cliente).
 
 App Streamlit: AED en la página principal + selector de modelo para entrenar
-y evaluar. Lógica separada en src/ (carga, limpieza, fe, procesamiento, aed,
+y evaluar. Lógica separada en src/ (carga, limpieza, procesamiento, aed,
 modelos/<cada modelo>).
 
 Ejecutar:  streamlit run app/main.py
@@ -28,12 +28,10 @@ def cargar():
 
 
 @st.cache_data(show_spinner="Entrenando y evaluando…")
-def entrenar(nombre_modelo, usar_fe, serv, pago, contr):
+def entrenar(nombre_modelo):
     _, datos = cargar()
     modulo = registro_modelos.obtener(nombre_modelo)
-    return procesamiento.entrenar_evaluar(
-        datos, modulo, usar_fe=usar_fe,
-        cantidad_servicios=serv, pago_automatico=pago, contract_ordinal=contr)
+    return procesamiento.entrenar_evaluar(datos, modulo)
 
 
 # ---------------- Carátula ----------------
@@ -49,7 +47,7 @@ c2.metric("Columnas", meta["columnas"])
 c3.metric("SHA-256 original", "OK" if meta["sha256_ok"] else "≠")
 
 # Partición de desarrollo (para el AED, sin mirar el test)
-df_base, numericas, categoricas = procesamiento.construir_features(datos, usar_fe=False)
+df_base, numericas, categoricas = procesamiento.construir_features(datos)
 Xtr, Xte, ytr, yte = procesamiento.separar(df_base, numericas + categoricas)
 dev = Xtr.copy()
 dev["Churn"] = ytr.values
@@ -57,12 +55,6 @@ dev["Churn"] = ytr.values
 # ---------------- Sidebar: modelo ----------------
 st.sidebar.header("Modelo")
 nombre_modelo = st.sidebar.selectbox("Elegí un modelo", registro_modelos.nombres())
-st.sidebar.markdown("**Ingeniería de características (opcional)**")
-usar_fe = st.sidebar.checkbox("Activar FE derivada", value=False,
-                              help="Evaluada: no mejora al modelo elegido. Se deja opcional.")
-serv = st.sidebar.checkbox("cantidad_servicios", value=True, disabled=not usar_fe)
-pago = st.sidebar.checkbox("pago_automatico", value=True, disabled=not usar_fe)
-contr = st.sidebar.checkbox("Contract ordinal", value=True, disabled=not usar_fe)
 entrenar_click = st.sidebar.button("Entrenar y evaluar", type="primary")
 
 # ---------------- Página principal: AED ----------------
@@ -108,7 +100,7 @@ with tab_modelo:
     if not entrenar_click:
         st.info("Elegí un modelo en la barra lateral y tocá **Entrenar y evaluar**.")
     else:
-        res = entrenar(nombre_modelo, usar_fe, serv, pago, contr)
+        res = entrenar(nombre_modelo)
         m, d = res["metricas"], res["metricas_dummy"]
         st.markdown("**Métricas en prueba** (test 20%, umbral 0,5)")
         tabla = pd.DataFrame({
@@ -139,6 +131,6 @@ with tab_modelo:
             st.pyplot(fig)
 
         st.caption(f"Mejores hiperparámetros: {res['mejores_params']} · "
-                   f"{res['n_features']} features · FE: {'sí' if res['usar_fe'] else 'no'}")
+                   f"{res['n_features']} features")
         if res["avisos"]:
             st.warning("Avisos de entrenamiento: " + " | ".join(res["avisos"]))
