@@ -31,10 +31,14 @@ def cargar():
 
 
 @st.cache_data(show_spinner="Entrenando y evaluando…")
-def entrenar(nombre_modelo):
-    _, datos = cargar()
+def entrenar(nombre_modelo, _datos):
+    """Entrena con los datos ya cargados (`_datos` no se hashea).
+
+    Recibe el DataFrame en vez de re-leer de disco, para funcionar también
+    cuando los datos vienen del cargador de archivos.
+    """
     modulo = registro_modelos.obtener(nombre_modelo)
-    return procesamiento.entrenar_evaluar(datos, modulo)
+    return procesamiento.entrenar_evaluar(_datos, modulo)
 
 
 # ---------------- Carátula ----------------
@@ -117,7 +121,7 @@ with tab_modelo:
     if not entrenar_click:
         st.info("Elegí un modelo en la barra lateral y tocá **Entrenar y evaluar**.")
     else:
-        res = entrenar(nombre_modelo)
+        res = entrenar(nombre_modelo, datos)
         m, d = res["metricas"], res["metricas_dummy"]
         st.markdown("**Métricas en prueba** (test 20%, umbral 0,5)")
         tabla = pd.DataFrame({
