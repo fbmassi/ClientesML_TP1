@@ -1,12 +1,12 @@
 # Datos originales de Cliente
 
-Este directorio debe contener `Cliente.csv`. El CSV se excluye de Git; no hace falta descargarlo de otra fuente.
+Este directorio debe contener `Cliente.csv`. El CSV se excluye de Git y debe obtenerse del material original de la cátedra, como se indica abajo.
 
 1. Obtener de WebCampus/cátedra el ZIP original `TP 1 - Machine Learning.zip`.
-2. Ubicarlo en `TP1/_materiales_locales/` (también excluido de Git).
-3. Desde `TP1/`, ejecutar `python preparar_datos.py`.
+2. Ubicarlo en `_materiales_locales/`, dentro de la raíz del repositorio (también excluido de Git).
+3. Desde la raíz de `ClientesML_TP1`, ejecutar `.\.venv\Scripts\python.exe preparar_datos.py` en PowerShell, después de instalar las dependencias.
 
-Para otra ubicación: `python preparar_datos.py --zip "C:\ruta\TP 1 - Machine Learning.zip"`.
+Para otra ubicación, en PowerShell: `.\.venv\Scripts\python.exe preparar_datos.py --zip "C:\ruta\TP 1 - Machine Learning.zip"`.
 
 El script lee exclusivamente `TP 1 - Machine Learning/TP 1 - Machine Learning/Tema - Cliente/Cliente.7z` y extrae su único CSV sin modificar sus bytes. No extrae Accidente ni las otras alternativas. No sobreescribe un CSV diferente ya existente.
 

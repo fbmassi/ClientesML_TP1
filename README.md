@@ -66,7 +66,7 @@ Cada `Pipeline` tiene un `ColumnTransformer`: numéricas imputadas por **mediana
 
 **Limpieza.** El único problema real es `TotalCharges` (11 vacíos, 0,16%, todos con `tenure=0`): se tipifica a número y se imputa con **mediana en train** (los apuntes la recomiendan para variables sesgadas; media 2.283 ≫ mediana 1.397; evita *leakage*). Se descartan: **eliminar** (pierde datos), **imputar 0** (regla de negocio no verificable), **imputación predictiva** (costo injustificado para 11 valores). No se tratan **outliers** (son valores reales) y **no hay duplicados**.
 
-**Ingeniería de características (exploración posterior).** Se probaron `cantidad_servicios` (conteo), `pago_automatico` (binarización) y `Contract` ordinal **después de observar el test original**, por lo que sus comparaciones de test son descriptivas, no una evaluación independiente ni una mejora validada. La selección original de logística por CV queda intacta y la FE **no se incorpora al pipeline ni a la app**.
+**Ingeniería de características (exploración posterior).** Se probaron `cantidad_servicios` (conteo), `pago_automatico` (binarización) y `Contract` ordinal **después de observar el test original**, por lo que sus comparaciones de test son descriptivas, no una evaluación independiente ni una mejora validada. La selección original de logística por CV queda intacta y la FE **no se incorpora al pipeline estable**; la app la ofrece como opción exploratoria, desactivada por defecto.
 
 ## 4. Análisis exploratorio
 
@@ -157,16 +157,33 @@ Una sola partición/semilla/3 folds; búsqueda chica y umbral fijo 0,5; sin fech
 
 ## 9. Reproducibilidad
 
-El dataset de la cátedra **no se versiona** (ver [`data/README.md`](data/README.md)). Para reproducir:
+El dataset de la cátedra **no se versiona** (ver [`data/README.md`](data/README.md)). Obtener el ZIP original antes de preparar el CSV local.
+
+**Windows 11 / PowerShell**, con Python **3.13 de 64 bits**, desde la raíz de `ClientesML_TP1`:
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe preparar_datos.py --zip "C:\ruta\TP 1 - Machine Learning.zip"
+.\.venv\Scripts\python.exe ejecutar_notebook.py
+.\.venv\Scripts\python.exe -m unittest -v test_verificaciones
+# Complemento opcional Streamlit:
+.\.venv\Scripts\python.exe -m pip install -r app/requirements.txt
+.\.venv\Scripts\python.exe -m streamlit run app/main.py
+```
+
+Reemplazar la ruta de ejemplo por la ubicación real del ZIP. Si el CSV original ya existe, omitir la preparación. No reutilizar un entorno copiado de otra computadora; no es necesario activarlo ni cambiar la política de PowerShell.
+
+**macOS / Linux** (desde la misma raíz):
 
 ```bash
 python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-.venv/bin/python preparar_datos.py        # extrae data/Cliente.csv
-.venv/bin/python ejecutar_notebook.py      # entrena y guarda resultados/
-# App interactiva (AED + selector de modelos):
-.venv/bin/pip install -r app/requirements.txt
-.venv/bin/streamlit run app/main.py
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python preparar_datos.py --zip "/ruta/TP 1 - Machine Learning.zip"
+.venv/bin/python ejecutar_notebook.py
+.venv/bin/python -m unittest -v test_verificaciones
+.venv/bin/python -m pip install -r app/requirements.txt
+.venv/bin/python -m streamlit run app/main.py
 ```
 
 Resultados verificables en [`resultados/`](resultados/); verificaciones en `test_verificaciones.py`.
@@ -226,7 +243,7 @@ Each `Pipeline` has a `ColumnTransformer`: numerics imputed by **median** (learn
 
 **Cleaning.** The only real issue is `TotalCharges` (11 blanks, 0.16%, all with `tenure=0`): cast to numeric and imputed with the **training median** (the notes recommend the median for skewed variables; mean 2,283 ≫ median 1,397; avoids leakage). Discarded: **dropping** rows (needless data loss), **imputing 0** (an unverifiable business rule), **predictive imputation** (unjustified cost for 11 values). **Outliers** are not treated (they are real values) and there are **no duplicates**.
 
-**Feature engineering (later exploration).** `cantidad_servicios` (count), `pago_automatico` (binarization) and ordinal `Contract` were tried **after the original test had been observed**, so their test comparisons are descriptive, not an independent evaluation or a validated improvement. The original CV-based logistic selection stays intact and FE is **not added to the pipeline or the app**.
+**Feature engineering (later exploration).** `cantidad_servicios` (count), `pago_automatico` (binarization) and ordinal `Contract` were tried **after the original test had been observed**, so their test comparisons are descriptive, not an independent evaluation or a validated improvement. The original CV-based logistic selection stays intact and FE is **not added to the stable pipeline**; the app offers it as an exploratory option, disabled by default.
 
 ## 4. Exploratory analysis
 
@@ -317,16 +334,33 @@ A single split/seed/3 folds; small search and fixed 0.5 threshold; no date or ho
 
 ## 9. Reproducibility
 
-The course dataset is **not versioned** (see [`data/README.md`](data/README.md)). To reproduce:
+The course dataset is **not versioned** (see [`data/README.md`](data/README.md)). Obtain the original ZIP before preparing the local CSV.
+
+**Windows 11 / PowerShell**, using **64-bit Python 3.13**, from the `ClientesML_TP1` repository root:
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe preparar_datos.py --zip "C:\path\TP 1 - Machine Learning.zip"
+.\.venv\Scripts\python.exe ejecutar_notebook.py
+.\.venv\Scripts\python.exe -m unittest -v test_verificaciones
+# Optional Streamlit companion:
+.\.venv\Scripts\python.exe -m pip install -r app/requirements.txt
+.\.venv\Scripts\python.exe -m streamlit run app/main.py
+```
+
+Replace the example path with the actual ZIP location. If the original CSV already exists, skip preparation. Create a clean environment rather than copying one from another machine. Activation and PowerShell policy changes are unnecessary.
+
+**macOS / Linux** (from the same root):
 
 ```bash
 python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-.venv/bin/python preparar_datos.py        # extracts data/Cliente.csv
-.venv/bin/python ejecutar_notebook.py      # trains and writes resultados/
-# Interactive app (EDA + model switcher):
-.venv/bin/pip install -r app/requirements.txt
-.venv/bin/streamlit run app/main.py
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python preparar_datos.py --zip "/path/TP 1 - Machine Learning.zip"
+.venv/bin/python ejecutar_notebook.py
+.venv/bin/python -m unittest -v test_verificaciones
+.venv/bin/python -m pip install -r app/requirements.txt
+.venv/bin/python -m streamlit run app/main.py
 ```
 
 Verifiable outputs in [`resultados/`](resultados/); checks in `test_verificaciones.py`.

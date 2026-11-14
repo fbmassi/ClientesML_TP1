@@ -20,7 +20,6 @@ from src import modelos as registro_modelos
 st.set_page_config(page_title="TP1 ML · Churn Cliente", layout="wide")
 
 
-@st.cache_data(show_spinner=False)
 def cargar():
     raw = carga.cargar_crudo()
     datos = limpieza.limpiar(raw)
@@ -28,8 +27,8 @@ def cargar():
 
 
 @st.cache_data(show_spinner="Entrenando y evaluando…")
-def entrenar(nombre_modelo, usar_fe, serv, pago, contr):
-    _, datos = cargar()
+def entrenar(nombre_modelo, datos, usar_fe, serv, pago, contr):
+    """Incluye los datos y las opciones de FE en la clave de caché."""
     modulo = registro_modelos.obtener(nombre_modelo)
     return procesamiento.entrenar_evaluar(
         datos, modulo, usar_fe=usar_fe,
@@ -108,7 +107,7 @@ with tab_modelo:
     if not entrenar_click:
         st.info("Elegí un modelo en la barra lateral y tocá **Entrenar y evaluar**.")
     else:
-        res = entrenar(nombre_modelo, usar_fe, serv, pago, contr)
+        res = entrenar(nombre_modelo, datos, usar_fe, serv, pago, contr)
         m, d = res["metricas"], res["metricas_dummy"]
         st.markdown("**Resultados exploratorios** (test ya observado, umbral 0,5)" if res["usar_fe"]
                     else "**Métricas del experimento base** (test 20%, umbral 0,5)")

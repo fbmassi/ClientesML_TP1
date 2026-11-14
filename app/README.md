@@ -4,7 +4,7 @@ Complemento opcional para mostrar el AED y reproducir cada uno de los cuatro mod
 
 ## Ejecutar en Windows 11
 
-Usar Python **3.13 de 64 bits**, sin reutilizar un entorno copiado de otra computadora. Desde `TP1/` (la carpeta que contiene `experimento.py`):
+Usar Python **3.13 de 64 bits**, sin reutilizar un entorno copiado de otra computadora. Desde la raíz de `ClientesML_TP1` (la carpeta que contiene `experimento.py`):
 
 ```powershell
 py -3.13 -m venv .venv
@@ -22,6 +22,18 @@ El CSV debe estar en `data/Cliente.csv`. Si falta, obtener el ZIP original segú
 
 No hace falta volver a extraer si el CSV original ya está presente. No se distribuyen entornos virtuales ni los materiales completos de la cátedra.
 
+## macOS / Linux
+
+Desde la misma raíz, crear un entorno limpio e instalar las dependencias:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r app/requirements.txt
+# Si falta el CSV, obtener el ZIP original y prepararlo antes de iniciar:
+.venv/bin/python preparar_datos.py --zip "/ruta/TP 1 - Machine Learning.zip"
+.venv/bin/python -m streamlit run app/main.py
+```
+
 ## Qué hace
 
 - **AED:** distribución del objetivo, numéricas por clase, tramos de antigüedad, correlaciones y asociación bivariada (Cramér's V / chi²), sobre el **80% de desarrollo**.
@@ -29,6 +41,8 @@ No hace falta volver a extraer si el CSV original ya está presente. No se distr
 - **FE opcional:** los resultados se identifican como exploratorios porque reutilizan un test ya observado. No son una nueva evaluación independiente ni justifican cambiar el modelo, umbral o pipeline estable. No seleccionar variantes por las cifras de ese test.
 
 Una asociación bivariada no significativa no demuestra irrelevancia predictiva. Una brecha train–CV grande sugiere sobreajuste; una pequeña debe interpretarse junto con el nivel de los scores. Las advertencias de no convergencia de las MLP se mantienen visibles.
+
+Al cambiar el CSV local, la app vuelve a leer los datos; la caché de entrenamiento distingue su contenido y las opciones de FE.
 
 ## Estructura
 
