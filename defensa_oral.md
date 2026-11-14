@@ -65,24 +65,24 @@ Un único dataset (una tabla); la unidad es el cliente. Cada fila: 20 atributos 
 - **Perfil numérico:** quien se da de baja tiene menos antigüedad (media 18 vs 38 meses) y mayor cargo mensual (75 vs 61). `TotalCharges` es menor en bajas (clientes nuevos).
 - **Antigüedad:** la tasa de baja cae de forma monótona: 47% (0–12 m) → 29% (13–24) → 20% (25–48) → 10% (49–72). Relación no lineal.
 - **Asociación (Cramér's V):** Contract 0,41 · OnlineSecurity 0,35 · TechSupport 0,35 · InternetService 0,33 · PaymentMethod 0,31 son las más fuertes.
-- **Sin asociación significativa (chi², p>0,05):** `gender` y `PhoneService`.
-- **Colinealidad:** `tenure`–`TotalCharges` r=0,83 → `TotalCharges` redundante; los árboles no se afectan, la logística reparte el peso.
+- **Sin asociación bivariada significativa (chi², p>0,05):** `gender` y `PhoneService`. No demuestra irrelevancia predictiva ni ausencia de interacciones; se conservan ambas.
+- **Colinealidad:** `tenure`–`TotalCharges` r=0,83 → hay información compartida, no redundancia total demostrada. Dificulta interpretar coeficientes; en los árboles las variables correlacionadas pueden repartirse la importancia.
 - **Perfil del churner:** contrato mes a mes + fibra óptica + cheque electrónico + poca antigüedad + sin seguridad/soporte + factura electrónica + adulto mayor.
-- **FE evaluada** (cantidad_servicios, pago_automatico, Contract ordinal): **no mejora al modelo elegido** (Logística, f1-macro 0,7376 sin cambios). En la ablación, solo `pago_automatico` aporta algo a RF/MLP. Decisión: **no adoptarla** (Navaja de Ockham).
+- **FE exploratoria posterior** (cantidad_servicios, pago_automatico, Contract ordinal): se estudió después de observar el test original. Las comparaciones de ese test son descriptivas, no mejoras validadas ni fundamento para una nueva selección. Por ejemplo, pago_automatico mejora el test de RF, pero empeora su CV (0,7239 a 0,7183). El experimento estable y su selección original de logística quedan congelados; FE no se incorpora al pipeline ni a la app.
 
 ## Métricas: qué miden (coloquial + técnico)
 
-Base: matriz de confusión — TP (baja detectada), FN (baja que se escapó), FP (falsa alarma), TN (permanencia acertada).
+Accuracy, precision, recall y F1 parten de la matriz de confusión al umbral fijado: TP (baja detectada), FN (baja que se escapó), FP (falsa alarma), TN (permanencia acertada). ROC-AUC y average precision usan las puntuaciones de riesgo en distintos umbrales, no una única matriz.
 
 | Métrica | Técnica | En criollo |
 |---|---|---|
-| Accuracy | (TP+TN)/total | de cada 100, en cuántos acerté; **engaña** con desbalance |
+| Accuracy | (TP+TN)/total | de cada 100, en cuántos acerté; puede ocultar fallos en las bajas |
 | Precision (churn) | TP/(TP+FP) | cuando digo "se va", ¿cuántas veces acierto? → falsas alarmas |
 | Recall (churn) | TP/(TP+FN) | de los que se van, ¿a cuántos agarré? → cobertura |
 | F1 (churn) | 2·P·R/(P+R) | una nota que exige tener bien precision y recall a la vez |
 | F1 macro | promedio del F1 de ambas clases | misma importancia a los que se van y a los que se quedan; **métrica de selección** |
 | ROC-AUC | área TPR–FPR | capacidad de **ordenar** por riesgo sin depender del umbral (0,5 azar, 1 perfecto) |
-| Average precision | área precision-recall | ranking enfocado en las bajas |
+| Average precision | precision ponderada por incrementos de recall | resume la curva precision-recall sin área trapezoidal; ranking enfocado en las bajas |
 
 ## Decisiones y preguntas probables
 

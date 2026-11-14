@@ -83,7 +83,7 @@ Cada `Pipeline` incluye un `ColumnTransformer`. En cada fold las numéricas se i
 
 No se aplica remuestreo, recorte de outliers, selección supervisada ni reducción dimensional sin necesidad demostrada. Se conserva el desbalance original y se evalúan métricas que distinguen ambas clases. El umbral se fija en **0.5** para todos los modelos. Una optimización de costos o recall sería un experimento adicional exclusivamente sobre desarrollo.
 
-**Ingeniería de características evaluada.** Se probaron tres transformaciones adicionales, documentadas por transparencia:
+**Ingeniería de características: exploración posterior.** Después de la evaluación original se probaron estas tres transformaciones adicionales. Se conservan por su valor didáctico, separadas del experimento final:
 
 | Característica | Variables de origen | Técnica | Qué aporta (concepto) |
 |---|---|---|---|
@@ -91,7 +91,11 @@ No se aplica remuestreo, recorte de outliers, selección supervisada ni reducci�
 | `pago_automatico` (0/1) | PaymentMethod | **Binarización** (automático = 1; cheque electrónico/postal = 0) | concentra en una variable la señal del medio de pago |
 | `Contract` ordinal | Contract | **Codificación ordinal** (mensual 0 < anual 1 < bianual 2) en vez de one-hot | respeta el orden natural del plazo |
 
-Se evaluaron con la misma metodología (partición, CV de 3 folds, selección por F1 macro). **No mejoran al modelo seleccionado:** la logística mantiene exactamente su F1 macro de prueba (0.7376) y su ROC-AUC (0.8419), y su F1 macro de CV queda igual (0.7324 frente a 0.7325). Solo las MLP —que no son el modelo elegido— muestran mejoras menores (F1 macro +0.028 y +0.004). Una **ablación por característica** precisa el aporte: la única con mejora consistente (Random Forest +0.013 y MLP +0.032) es `pago_automatico`; `cantidad_servicios` ayuda al F1 de la MLP pero le baja el ROC-AUC, y `Contract` ordinal tiene efecto mixto; al combinarlas, en Random Forest se cancelan (vuelve al baseline). Las tres son **combinaciones de variables que el one-hot ya aporta**, por lo que para la logística resultan redundantes. Por la Navaja de Ockham, el pipeline final **conserva el preprocesamiento base sin estas características**; la exploración se registra como evidencia de que la decisión de no incluirlas es **empírica, no por omisión**.
+Se reutilizaron la partición y las búsquedas de CV para explorar cada variante, **cuando el test original ya había sido observado**. Sus comparaciones de test son descriptivas de esta muestra, **no una evaluación final independiente ni evidencia de una mejora validada**. No se incorporan al pipeline estable ni se usan para seleccionar de nuevo el modelo. La selección original de logística por CV, anterior a esta exploración, se mantiene intacta.
+
+Con las tres transformaciones, la logística obtiene F1 macro de CV 0.7324 frente a 0.7325 del experimento base; en el test ya observado mantiene F1 macro 0.7376 y ROC-AUC 0.8419 al redondear a cuatro decimales. Las MLP muestran variaciones descriptivas de F1 macro de test de aproximadamente +0.028 y +0.005. Esto no demuestra que la ingeniería mejore su generalización.
+
+La ablación ilustra por qué no debe elegirse con el test: `pago_automatico` aumenta el F1 macro de test de Random Forest aproximadamente 0.013, pero su F1 macro de CV baja de 0.7239 a 0.7183. En la MLP de una capa aumenta aproximadamente 0.032 en ese test y pasa de 0.7054 a 0.7145 en CV; esos scores forman parte de una exploración posterior, no de una nueva selección final. Las tres transformaciones derivan de variables existentes, sin aportar nuevas observaciones. Para las dos primeras, la logística ya puede formar combinaciones lineales de los indicadores one-hot; reemplazar `Contract` por una codificación ordinal además restringe su representación. Esta ingeniería se evaluó pero **no se incorpora a la app ni al pipeline estable**. Se conserva el pipeline original sin reinterpretar retroactivamente su elección; no se afirma que estas alternativas hayan sido validadas de manera independiente.
 
 ## 4. Análisis exploratorio
 
@@ -121,8 +125,8 @@ La tasa de baja **cae de forma monótona con la antigüedad**: 47,3% (0–12 mes
 |---|---|---|
 | Contract | Month-to-month 42,7% | Two year 2,9% |
 | InternetService | Fiber optic 42,1% | No 7,2% |
-| OnlineSecurity | No 41,9% | Yes 14,4% |
-| TechSupport | No 41,8% | Yes 15,2% |
+| OnlineSecurity | No 41,9% | No internet service 7,2% |
+| TechSupport | No 41,8% | No internet service 7,2% |
 | PaymentMethod | Electronic check 45,7% | Credit card (aut.) 14,9% |
 | SeniorCitizen | Sí 41,1% | No 23,7% |
 | PaperlessBilling | Yes 33,8% | No 16,0% |
@@ -153,20 +157,20 @@ Se mide la asociación de cada categórica con `Churn` mediante la prueba de **c
 | PhoneService | 0,02 | 0,20 | **no significativa** |
 | gender | 0,00 | 0,89 | **no significativa** |
 
-`gender` y `PhoneService` **no muestran asociación significativa** con la baja (p > 0,05): son candidatas a descartar. Las de mayor peso descriptivo son `Contract`, los servicios de seguridad/soporte, el tipo de internet y el medio de pago.
+En este análisis bivariado no se detecta asociación estadísticamente significativa entre `gender` o `PhoneService` y la baja (p > 0,05). Esto **no demuestra irrelevancia predictiva**, ausencia de interacciones ni justifica descartarlas automáticamente; ambas se conservan en el pipeline. Las de mayor peso descriptivo son `Contract`, los servicios de seguridad/soporte, el tipo de internet y el medio de pago.
 
 ### Relaciones entre variables (multivariado)
 
-`tenure` y `TotalCharges` están fuertemente correlacionadas (r = 0,83), y `MonthlyCharges` con `TotalCharges` (r = 0,65): `TotalCharges` es en buena parte **redundante** con las otras dos. El nivel `No internet service` se repite en seis variables de servicios y queda determinado por `InternetService`.
+`tenure` y `TotalCharges` están fuertemente correlacionadas (r = 0,83), y `MonthlyCharges` con `TotalCharges` (r = 0,65): hay información compartida entre estas variables, sin que la correlación pruebe redundancia total. El nivel `No internet service` se repite en seis variables de servicios y queda determinado por `InternetService`.
 
-### Primeras conclusiones (previas al modelado)
+### Conclusiones descriptivas del EDA
 
 1. El desbalance moderado (26,5%) exige medir con **F1 y recall**, no solo accuracy.
-2. Los ejes informativos son `Contract`, `tenure`, `InternetService`, seguridad/soporte y medio de pago; `gender` y `PhoneService` aparecen **irrelevantes**.
-3. La **colinealidad** `tenure`–`TotalCharges` dificultará interpretar los coeficientes de la logística; los árboles no se ven afectados.
+2. Los ejes informativos son `Contract`, `tenure`, `InternetService`, seguridad/soporte y medio de pago; `gender` y `PhoneService` muestran poca asociación bivariada, sin demostrar irrelevancia predictiva.
+3. La **colinealidad** `tenure`–`TotalCharges` dificultará interpretar los coeficientes de la logística; los árboles no requieren predictores independientes, pero las variables correlacionadas pueden repartirse la importancia.
 4. La **no linealidad** de `tenure` justifica la opción de discretizarla para modelos lineales.
 5. El **perfil del que se da de baja** es coherente (contrato mensual, fibra, cheque electrónico, poca antigüedad, sin seguridad/soporte): el problema es aprendible, con separación buena pero no perfecta.
-6. Fuera de los 11 `TotalCharges`, **no hay outliers ni datos sucios**: la limpieza necesaria es mínima.
+6. Fuera de los 11 vacíos de `TotalCharges`, los controles no detectaron otros problemas que requieran limpieza. No se recortan valores por ser extremos sin evidencia de error.
 
 ![EDA de entrenamiento](resultados/eda.png)
 
@@ -194,19 +198,21 @@ La propagación hacia adelante calcula activaciones; la pérdida mide discrepanc
 
 ## 6. Validación, resultados y comparación
 
+Esta sección corresponde exclusivamente al **experimento original sin FE**, cuya selección se realizó por CV antes de observar el test. La exploración posterior de características descrita en la §3 no altera esta selección ni convierte sus propios resultados de test en una nueva evaluación independiente.
+
 La regla previa al test es **maximizar F1 macro medio de CV**; empates exactos conservan el orden de candidatos declarado. F1 macro es el promedio del F1 de ambas clases; F1 combina precision y recall mediante 2PR/(P+R). Precision de churn mide bajas reales entre alertas, recall mide bajas detectadas entre todas las bajas reales. Se informa también accuracy, ROC-AUC y average precision, sin usarlas para cambiar la regla de selección.
 
-**Qué mide cada métrica.** Todas se derivan de la matriz de confusión (TP: baja detectada; FN: baja no detectada; FP: falsa alarma; TN: permanencia acertada).
+**Qué mide cada métrica.** Accuracy, precision, recall y F1 se calculan a partir de la matriz de confusión al umbral fijado (TP: baja detectada; FN: baja no detectada; FP: falsa alarma; TN: permanencia acertada). ROC-AUC y average precision requieren probabilidades o puntuaciones de riesgo y consideran distintos umbrales; no se obtienen de una única matriz al umbral 0.5.
 
 | Métrica | Definición técnica | Qué representa en el problema |
 |---|---|---|
-| Accuracy | (TP+TN)/total | proporción de aciertos global; con desbalance sobreestima (el baseline mayoritario alcanza 0,735 sin detectar bajas) |
-| Precision (churn) | TP/(TP+FP) | de las alertas de baja, cuántas son reales; mide el costo de las falsas alarmas |
+| Accuracy | (TP+TN)/total | proporción de aciertos global; puede ocultar fallos en la minoritaria (el baseline alcanza 0,735 sin detectar bajas) |
+| Precision (churn) | TP/(TP+FP) | de las alertas de baja, cuántas son reales; no cuantifica por sí sola su costo económico |
 | Recall (churn) | TP/(TP+FN) | de las bajas reales, cuántas se detectan; mide la cobertura de detección |
 | F1 (churn) | media armónica 2·P·R/(P+R) | equilibrio precision-recall de la clase minoritaria; penaliza el desbalance entre ambas |
 | F1 macro | promedio del F1 de ambas clases | desempeño equilibrado entre clases; es la **métrica de selección** elegida por el desbalance |
 | ROC-AUC | área bajo la curva TPR–FPR | capacidad de ordenar clientes por riesgo con independencia del umbral (0,5 = azar, 1 = perfecto) |
-| Average precision | área bajo la curva precision-recall | calidad del ranking enfocada en la clase positiva (las bajas) |
+| Average precision | suma de precision ponderada por incrementos de recall | resume la curva precision-recall, sin interpolación trapezoidal; enfocada en las bajas |
 
 | modelo | parametros | cv_f1_macro | cv_f1_macro_std | train_f1_macro | busqueda_y_refit_s | refit_s |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -215,7 +221,7 @@ La regla previa al test es **maximizar F1 macro medio de CV**; empates exactos c
 | MLP_1_capa | {"modelo__alpha": 0.01} | 0.7054 | 0.0075 | 0.7951 | 35.2855 | 7.3785 |
 | MLP_2_capas | {"modelo__alpha": 0.01} | 0.6860 | 0.0098 | 0.8587 | 47.4751 | 9.7806 |
 
-**Cómo se mide el sobreajuste (overfitting).** Se compara el desempeño en entrenamiento contra el de datos no vistos (la CV): la **brecha** entre ambos es el indicador. Una brecha chica indica buena generalización; una brecha grande, que el modelo memoriza el entrenamiento. Con el F1 macro (train − CV): Logística 0.005, Random Forest 0.044, MLP de una capa 0.090 y MLP de dos capas 0.173. A mayor capacidad del modelo, mayor brecha, sin mejora fuera de entrenamiento: evidencia de sobreajuste que respalda elegir el modelo más simple.
+**Cómo se mide el sobreajuste (overfitting).** Se compara el desempeño en entrenamiento contra el de datos no vistos (la CV): la **brecha** entre ambos es el indicador. Una brecha grande es un indicio de sobreajuste. Una brecha pequeña por sí sola no demuestra buen rendimiento: ambos scores podrían ser bajos; deben evaluarse junto con su magnitud. Con el F1 macro (train − CV): Logística 0.005, Random Forest 0.044, MLP de una capa 0.090 y MLP de dos capas 0.173. A mayor capacidad del modelo, mayor brecha, sin mejora fuera de entrenamiento: evidencia de sobreajuste que respalda elegir el modelo más simple.
 
 La desviación estándar de tres folds describe variabilidad; no es un intervalo de confianza ni una prueba de significación. El score del ganador tiene posible optimismo por selección. El tiempo de búsqueda incluye los seis ajustes de CV de esa familia y su refit; `refit_s` mide solo el ajuste final. Los tiempos pertenecen a esta máquina, con un hilo para los modelos y las bibliotecas numéricas durante el entrenamiento.
 

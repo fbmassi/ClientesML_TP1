@@ -66,7 +66,7 @@ Cada `Pipeline` tiene un `ColumnTransformer`: numéricas imputadas por **mediana
 
 **Limpieza.** El único problema real es `TotalCharges` (11 vacíos, 0,16%, todos con `tenure=0`): se tipifica a número y se imputa con **mediana en train** (los apuntes la recomiendan para variables sesgadas; media 2.283 ≫ mediana 1.397; evita *leakage*). Se descartan: **eliminar** (pierde datos), **imputar 0** (regla de negocio no verificable), **imputación predictiva** (costo injustificado para 11 valores). No se tratan **outliers** (son valores reales) y **no hay duplicados**.
 
-**Ingeniería de características (evaluada y descartada).** Se probaron `cantidad_servicios` (conteo), `pago_automatico` (binarización) y `Contract` ordinal. Con la misma metodología **no mejoran al modelo elegido** (logística: F1-macro 0,7376 y ROC-AUC 0,8419 sin cambios). Una ablación muestra que solo `pago_automatico` aporta algo a RF/MLP. Por Navaja de Ockham, el pipeline final **no las incluye**; la decisión es empírica, no por omisión.
+**Ingeniería de características (exploración posterior).** Se probaron `cantidad_servicios` (conteo), `pago_automatico` (binarización) y `Contract` ordinal **después de observar el test original**, por lo que sus comparaciones de test son descriptivas, no una evaluación independiente ni una mejora validada. La selección original de logística por CV queda intacta y la FE **no se incorpora al pipeline ni a la app**.
 
 ## 4. Análisis exploratorio
 
@@ -96,9 +96,9 @@ Tasa de baja por antigüedad: **47,3%** (0–12 m) → 28,6% (13–24) → 20,2%
 | MultipleLines | 0,04 | muy débil |
 | **PhoneService / gender** | **0,02 / 0,00** | **no significativas (p>0,05)** |
 
-**Multivariado:** `tenure`–`TotalCharges` r=0,83 (TotalCharges redundante).
+**Multivariado:** `tenure`–`TotalCharges` r=0,83 (información compartida, sin redundancia total demostrada).
 
-**Conclusiones del AED:** (1) desbalance → medir con F1/recall; (2) drivers = Contract, tenure, InternetService, seguridad/soporte, pago; (3) `gender`/`PhoneService` irrelevantes; (4) colinealidad tenure–TotalCharges; (5) perfil del churner coherente → problema aprendible.
+**Conclusiones del AED:** (1) desbalance → medir con F1/recall; (2) drivers = Contract, tenure, InternetService, seguridad/soporte, pago; (3) `gender`/`PhoneService` con poca asociación bivariada (sin demostrar irrelevancia); (4) colinealidad tenure–TotalCharges; (5) perfil del churner coherente → problema aprendible.
 
 ![EDA de entrenamiento](resultados/eda.png)
 
@@ -226,7 +226,7 @@ Each `Pipeline` has a `ColumnTransformer`: numerics imputed by **median** (learn
 
 **Cleaning.** The only real issue is `TotalCharges` (11 blanks, 0.16%, all with `tenure=0`): cast to numeric and imputed with the **training median** (the notes recommend the median for skewed variables; mean 2,283 ≫ median 1,397; avoids leakage). Discarded: **dropping** rows (needless data loss), **imputing 0** (an unverifiable business rule), **predictive imputation** (unjustified cost for 11 values). **Outliers** are not treated (they are real values) and there are **no duplicates**.
 
-**Feature engineering (evaluated and discarded).** `cantidad_servicios` (count), `pago_automatico` (binarization) and ordinal `Contract` were tested. Under the same methodology they **do not improve the chosen model** (logistic: F1-macro 0.7376 and ROC-AUC 0.8419 unchanged). An ablation shows only `pago_automatico` helps RF/MLP slightly. By Occam's razor the final pipeline **excludes them**; the decision is empirical, not an omission.
+**Feature engineering (later exploration).** `cantidad_servicios` (count), `pago_automatico` (binarization) and ordinal `Contract` were tried **after the original test had been observed**, so their test comparisons are descriptive, not an independent evaluation or a validated improvement. The original CV-based logistic selection stays intact and FE is **not added to the pipeline or the app**.
 
 ## 4. Exploratory analysis
 
@@ -256,9 +256,9 @@ Churn rate by tenure: **47.3%** (0–12 m) → 28.6% (13–24) → 20.2% (25–4
 | MultipleLines | 0.04 | very weak |
 | **PhoneService / gender** | **0.02 / 0.00** | **not significant (p>0.05)** |
 
-**Multivariate:** `tenure`–`TotalCharges` r=0.83 (TotalCharges is redundant).
+**Multivariate:** `tenure`–`TotalCharges` r=0.83 (shared information, no full redundancy proven).
 
-**EDA conclusions:** (1) imbalance → measure with F1/recall; (2) drivers = Contract, tenure, InternetService, security/support, payment; (3) `gender`/`PhoneService` irrelevant; (4) tenure–TotalCharges collinearity; (5) a coherent churner profile → the problem is learnable.
+**EDA conclusions:** (1) imbalance → measure with F1/recall; (2) drivers = Contract, tenure, InternetService, security/support, payment; (3) `gender`/`PhoneService` show weak bivariate association (not proven irrelevant); (4) tenure–TotalCharges collinearity; (5) a coherent churner profile → the problem is learnable.
 
 ![Training EDA](resultados/eda.png)
 
