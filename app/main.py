@@ -1,7 +1,7 @@
 """TP1 — Machine Learning: clasificación de bajas de clientes (Cliente).
 
 App Streamlit: AED en la página principal + selector de modelo para entrenar
-y evaluar. Lógica separada en src/ (carga, limpieza, procesamiento, aed,
+y evaluar. Lógica separada en src/ (carga, limpieza, fe, procesamiento, aed,
 modelos/<cada modelo>).
 
 Ejecutar:  streamlit run app/main.py
@@ -22,23 +22,18 @@ st.set_page_config(page_title="TP1 ML · Churn Cliente", layout="wide")
 
 @st.cache_data(show_spinner=False)
 def cargar():
-    """Carga desde data/Cliente.csv; devuelve (None, None) si no está en el servidor."""
-    try:
-        raw = carga.cargar_crudo()
-    except FileNotFoundError:
-        return None, None
-    return raw, limpieza.limpiar(raw)
+    raw = carga.cargar_crudo()
+    datos = limpieza.limpiar(raw)
+    return raw, datos
 
 
 @st.cache_data(show_spinner="Entrenando y evaluando…")
-def entrenar(nombre_modelo, _datos):
-    """Entrena con los datos ya cargados (`_datos` no se hashea).
-
-    Recibe el DataFrame en vez de re-leer de disco, para funcionar también
-    cuando los datos vienen del cargador de archivos.
-    """
+def entrenar(nombre_modelo, usar_fe, serv, pago, contr):
+    _, datos = cargar()
     modulo = registro_modelos.obtener(nombre_modelo)
-    return procesamiento.entrenar_evaluar(_datos, modulo)
+    return procesamiento.entrenar_evaluar(
+        datos, modulo, usar_fe=usar_fe,
+        cantidad_servicios=serv, pago_automatico=pago, contract_ordinal=contr)
 
 
 # ---------------- Carátula ----------------
@@ -47,20 +42,6 @@ st.caption("Inteligencia Artificial · 2C 2026 · Prof. Parkinson · "
            "Equipo 8: Massi (1156946), Nari (1165816), Vanore (1179980)")
 
 raw, datos = cargar()
-if raw is None:
-    st.warning("No se encontró `data/Cliente.csv` en el servidor "
-               "(el dataset de la cátedra no se versiona). Subí el archivo para continuar.")
-    subido = st.file_uploader("Subí Cliente.csv", type=["csv"])
-    if subido is None:
-        st.info("Esperando el archivo **Cliente.csv** para iniciar la app…")
-        st.stop()
-    raw = carga.cargar_desde_bytes(subido.getvalue())
-    faltan = carga.faltan_columnas(raw)
-    if faltan:
-        st.error(f"El CSV subido no parece ser el dataset Cliente. Faltan columnas: {faltan}")
-        st.stop()
-    datos = limpieza.limpiar(raw)
-
 meta = carga.resumen_carga(raw)
 c1, c2, c3 = st.columns(3)
 c1.metric("Clientes", meta["filas"])
@@ -68,7 +49,7 @@ c2.metric("Columnas", meta["columnas"])
 c3.metric("SHA-256 original", "OK" if meta["sha256_ok"] else "≠")
 
 # Partición de desarrollo (para el AED, sin mirar el test)
-df_base, numericas, categoricas = procesamiento.construir_features(datos)
+df_base, numericas, categoricas = procesamiento.construir_features(datos, usar_fe=False)
 Xtr, Xte, ytr, yte = procesamiento.separar(df_base, numericas + categoricas)
 dev = Xtr.copy()
 dev["Churn"] = ytr.values
@@ -76,6 +57,12 @@ dev["Churn"] = ytr.values
 # ---------------- Sidebar: modelo ----------------
 st.sidebar.header("Modelo")
 nombre_modelo = st.sidebar.selectbox("Elegí un modelo", registro_modelos.nombres())
+st.sidebar.markdown("**Ingeniería de características (opcional)**")
+usar_fe = st.sidebar.checkbox("Activar FE derivada", value=False,
+                              help="Exploración posterior con un test ya observado. No valida mejoras ni modifica la selección original.")
+serv = st.sidebar.checkbox("cantidad_servicios", value=True, disabled=not usar_fe)
+pago = st.sidebar.checkbox("pago_automatico", value=True, disabled=not usar_fe)
+contr = st.sidebar.checkbox("Contract ordinal", value=True, disabled=not usar_fe)
 entrenar_click = st.sidebar.button("Entrenar y evaluar", type="primary")
 
 # ---------------- Página principal: AED ----------------
@@ -99,11 +86,11 @@ with tab_aed:
     with cc2:
         st.markdown("Correlación entre numéricas")
         st.dataframe(aed.correlaciones(dev), width='stretch')
-        st.caption("tenure–TotalCharges r≈0,83: TotalCharges es redundante.")
+        st.caption("tenure–TotalCharges r≈0,83: comparten información; no prueba redundancia total.")
 
     st.markdown("**Asociación de cada categórica con la baja (Cramér's V, chi²)**")
     st.dataframe(aed.asociacion_categoricas(dev), width='stretch', height=320)
-    st.caption("gender y PhoneService no son significativas (p>0,05).")
+    st.caption("No se detecta asociación bivariada significativa en gender y PhoneService (p>0,05); no demuestra irrelevancia predictiva.")
 
     col = st.selectbox("Ver % de baja por categoría",
                        procesamiento.CATEGORICAS_BASE, index=procesamiento.CATEGORICAS_BASE.index("Contract"))
@@ -121,9 +108,10 @@ with tab_modelo:
     if not entrenar_click:
         st.info("Elegí un modelo en la barra lateral y tocá **Entrenar y evaluar**.")
     else:
-        res = entrenar(nombre_modelo, datos)
+        res = entrenar(nombre_modelo, usar_fe, serv, pago, contr)
         m, d = res["metricas"], res["metricas_dummy"]
-        st.markdown("**Métricas en prueba** (test 20%, umbral 0,5)")
+        st.markdown("**Resultados exploratorios** (test ya observado, umbral 0,5)" if res["usar_fe"]
+                    else "**Métricas del experimento base** (test 20%, umbral 0,5)")
         tabla = pd.DataFrame({
             nombre_modelo: m,
             "Baseline (Dummy)": d,
@@ -152,6 +140,6 @@ with tab_modelo:
             st.pyplot(fig)
 
         st.caption(f"Mejores hiperparámetros: {res['mejores_params']} · "
-                   f"{res['n_features']} features")
+                   f"{res['n_features']} features · FE: {'sí' if res['usar_fe'] else 'no'}")
         if res["avisos"]:
             st.warning("Avisos de entrenamiento: " + " | ".join(res["avisos"]))

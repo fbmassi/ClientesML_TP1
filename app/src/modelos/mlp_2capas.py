@@ -6,7 +6,7 @@ ESCALAR = True
 
 VENTAJAS = [
     "Composiciones no lineales más ricas (mayor capacidad).",
-    "Permite comparar el efecto de agregar profundidad.",
+    "Permite comparar dos arquitecturas con distinta capacidad.",
 ]
 LIMITACIONES = [
     "Más parámetros -> mayor sobreajuste (brecha train–CV 0,17).",

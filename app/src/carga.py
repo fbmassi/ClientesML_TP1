@@ -30,27 +30,6 @@ def cargar_crudo(path: Path = DATA) -> pd.DataFrame:
     return raw
 
 
-def cargar_desde_bytes(data: bytes) -> pd.DataFrame:
-    """Carga el CSV desde bytes subidos por el usuario (deploy sin el archivo).
-
-    Verifica la huella SHA-256 (solo informativa) como en la carga local.
-    """
-    import io
-    raw = pd.read_csv(io.BytesIO(data))
-    huella = hashlib.sha256(data).hexdigest()
-    raw.attrs["sha256_ok"] = (huella == SHA256)
-    raw.attrs["sha256"] = huella
-    return raw
-
-
-COLUMNAS_MINIMAS = ["customerID", "Churn", "tenure", "TotalCharges", "Contract"]
-
-
-def faltan_columnas(raw: pd.DataFrame) -> list:
-    """Devuelve las columnas esperadas que no están (para validar un CSV subido)."""
-    return [c for c in COLUMNAS_MINIMAS if c not in raw.columns]
-
-
 def resumen_carga(raw: pd.DataFrame) -> dict:
     """Metadatos básicos para mostrar en la app."""
     return {

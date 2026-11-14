@@ -6,7 +6,7 @@ Decisiones (fundadas en los apuntes de Ciencia de Datos, Clase 3):
 - La imputación por mediana NO se hace acá, sino dentro del pipeline por fold
   (procesamiento.py), para evitar fuga de información (leakage).
 - `Churn` se mapea a 1/0.
-- No hay duplicados ni inconsistencias; no se tratan outliers (son valores reales).
+- No hay duplicados ni inconsistencias; no se recortan extremos sin evidencia de error.
 """
 import numpy as np
 import pandas as pd

@@ -68,7 +68,7 @@ Un único dataset (una tabla); la unidad es el cliente. Cada fila: 20 atributos 
 - **Sin asociación bivariada significativa (chi², p>0,05):** `gender` y `PhoneService`. No demuestra irrelevancia predictiva ni ausencia de interacciones; se conservan ambas.
 - **Colinealidad:** `tenure`–`TotalCharges` r=0,83 → hay información compartida, no redundancia total demostrada. Dificulta interpretar coeficientes; en los árboles las variables correlacionadas pueden repartirse la importancia.
 - **Perfil del churner:** contrato mes a mes + fibra óptica + cheque electrónico + poca antigüedad + sin seguridad/soporte + factura electrónica + adulto mayor.
-- **FE exploratoria posterior** (cantidad_servicios, pago_automatico, Contract ordinal): se estudió después de observar el test original. Las comparaciones de ese test son descriptivas, no mejoras validadas ni fundamento para una nueva selección. Por ejemplo, pago_automatico mejora el test de RF, pero empeora su CV (0,7239 a 0,7183). El experimento estable y su selección original de logística quedan congelados; FE no se incorpora al pipeline ni a la app.
+- **FE exploratoria posterior** (cantidad_servicios, pago_automatico, Contract ordinal): se estudió después de observar el test original. Las comparaciones de ese test son descriptivas, no mejoras validadas ni fundamento para una nueva selección. Por ejemplo, pago_automatico mejora el test de RF, pero empeora su CV (0,7239 a 0,7183). El experimento estable y su selección original de logística quedan congelados; FE no se incorpora al pipeline y queda opcional en la app.
 
 ## Métricas: qué miden (coloquial + técnico)
 

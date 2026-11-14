@@ -157,7 +157,7 @@ Una sola partición/semilla/3 folds; búsqueda chica y umbral fijo 0,5; sin fech
 
 ## 9. Reproducibilidad
 
-`Cliente.csv` (dataset público Telco Churn) **está versionado**, así que la app arranca sola; para regenerarlo desde el material original de la cátedra (ver [`docs/data.md`](docs/data.md)):
+El dataset de la cátedra **no se versiona** (ver [`data/README.md`](data/README.md)). Para reproducir:
 
 ```bash
 python3 -m venv .venv
@@ -317,7 +317,7 @@ A single split/seed/3 folds; small search and fixed 0.5 threshold; no date or ho
 
 ## 9. Reproducibility
 
-`Cliente.csv` (public Telco Churn dataset) **is versioned**, so the app runs out of the box; to regenerate it from the original course material (see [`docs/data.md`](docs/data.md)):
+The course dataset is **not versioned** (see [`data/README.md`](data/README.md)). To reproduce:
 
 ```bash
 python3 -m venv .venv

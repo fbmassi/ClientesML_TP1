@@ -30,10 +30,10 @@ Thumbs.db
 __MACOSX/
 ._*
 
-# Datos: se versiona Cliente.csv (dataset público Telco Churn) para que el deploy
-# arranque solo; el resto de CSV y los materiales originales quedan fuera.
+# Datos de la cátedra: no se versionan (ver data/README.md). Para reproducir,
+# colocar el CSV con preparar_datos.py.
+data/Cliente.csv
 data/*.csv
-!data/Cliente.csv
 _materiales_locales/
 *.zip
 *.7z

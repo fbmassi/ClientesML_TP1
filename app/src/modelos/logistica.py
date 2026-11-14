@@ -5,7 +5,7 @@ NOMBRE = "Regresión Logística"
 ESCALAR = True  # sensible a la escala de las variables
 
 VENTAJAS = [
-    "Interpretable: cada peso explica el efecto de su variable.",
+    "Coeficientes que describen asociaciones condicionadas; no efectos causales.",
     "Rápida de entrenar y devuelve probabilidades.",
     "Buen baseline; fue la de mayor F1-macro de CV.",
 ]

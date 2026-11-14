@@ -37,7 +37,7 @@ El dataset Cliente fue indicado expresamente para esta tarea. La consigna del PD
 
 ## 2. Datos y variables
 
-Origen: `Tema - Cliente/Cliente.7z`, incluido en `TP 1 - Machine Learning.zip`. Se extrajo su único CSV conservando exactamente los bytes: **7.043 registros y 21 columnas**. La huella SHA-256 y las instrucciones de obtención se encuentran en `docs/data.md`. No se descargaron datos sustitutos.
+Origen: `Tema - Cliente/Cliente.7z`, incluido en `TP 1 - Machine Learning.zip`. Se extrajo su único CSV conservando exactamente los bytes: **7.043 registros y 21 columnas**. La huella SHA-256 y las instrucciones de obtención se encuentran en `data/README.md`. No se descargaron datos sustitutos.
 
 Es un **único dataset** (una sola tabla); la cátedra no entrega archivos separados de entrenamiento y prueba. La **unidad de análisis es el cliente**: cada fila describe a un cliente con 20 atributos más la etiqueta `Churn`. La tabla siguiente describe **qué mide o indica cada variable** y cómo se guarda en el CSV; el tratamiento posterior (codificación, escala, imputación) se detalla en la §3.
 
@@ -95,7 +95,7 @@ Se reutilizaron la partición y las búsquedas de CV para explorar cada variante
 
 Con las tres transformaciones, la logística obtiene F1 macro de CV 0.7324 frente a 0.7325 del experimento base; en el test ya observado mantiene F1 macro 0.7376 y ROC-AUC 0.8419 al redondear a cuatro decimales. Las MLP muestran variaciones descriptivas de F1 macro de test de aproximadamente +0.028 y +0.005. Esto no demuestra que la ingeniería mejore su generalización.
 
-La ablación ilustra por qué no debe elegirse con el test: `pago_automatico` aumenta el F1 macro de test de Random Forest aproximadamente 0.013, pero su F1 macro de CV baja de 0.7239 a 0.7183. En la MLP de una capa aumenta aproximadamente 0.032 en ese test y pasa de 0.7054 a 0.7145 en CV; esos scores forman parte de una exploración posterior, no de una nueva selección final. Las tres transformaciones derivan de variables existentes, sin aportar nuevas observaciones. Para las dos primeras, la logística ya puede formar combinaciones lineales de los indicadores one-hot; reemplazar `Contract` por una codificación ordinal además restringe su representación. Esta ingeniería se evaluó pero **no se incorpora a la app ni al pipeline estable**. Se conserva el pipeline original sin reinterpretar retroactivamente su elección; no se afirma que estas alternativas hayan sido validadas de manera independiente.
+La ablación ilustra por qué no debe elegirse con el test: `pago_automatico` aumenta el F1 macro de test de Random Forest aproximadamente 0.013, pero su F1 macro de CV baja de 0.7239 a 0.7183. En la MLP de una capa aumenta aproximadamente 0.032 en ese test y pasa de 0.7054 a 0.7145 en CV; esos scores forman parte de una exploración posterior, no de una nueva selección final. Las tres transformaciones derivan de variables existentes, sin aportar nuevas observaciones. Para las dos primeras, la logística ya puede formar combinaciones lineales de los indicadores one-hot; reemplazar `Contract` por una codificación ordinal además restringe su representación. La app permite reproducir esta exploración con FE desactivada por defecto. Se conserva el pipeline original sin reinterpretar retroactivamente su elección; no se afirma que estas alternativas hayan sido validadas de manera independiente.
 
 ## 4. Análisis exploratorio
 
@@ -276,7 +276,7 @@ Antes de otro experimento habría que definir horizonte, fecha de observación y
 
 El README contiene comandos de Windows 11 para crear el entorno, extraer Cliente, ejecutar la notebook y correr pruebas. `requirements.txt` fija las dependencias principales y numéricas; las versiones efectivamente usadas se guardan en `resultados/experimento.json`. La notebook ejecuta todos los pasos y comparte funciones con la versión de consola, sin cargar métricas preexistentes.
 
-Se guardan CSV de validación, selección y prueba, predicciones sin IDs para recalcular métricas, controles e índices de la partición, métricas por clase, matrices, curvas y figuras. No se guardan modelos entrenados grandes en Git; el `Cliente.csv` (dataset público Telco Churn) sí se versiona para que la app y el deploy funcionen sin pasos previos. `test_verificaciones.py` comprueba datos, separación/folds, ajuste de transformaciones solo con entrenamiento, métricas recalculadas, elección por CV y ejecución íntegra de la notebook.
+Se guardan CSV de validación, selección y prueba, predicciones sin IDs para recalcular métricas, controles e índices de la partición, métricas por clase, matrices, curvas y figuras. No se guardan modelos grandes ni datos originales en Git. `test_verificaciones.py` comprueba datos, separación/folds, ajuste de transformaciones solo con entrenamiento, métricas recalculadas, elección por CV y ejecución íntegra de la notebook.
 
 Materiales locales revisados:
 
@@ -289,6 +289,6 @@ Materiales locales revisados:
 
 `Clase 6.pdf` trata Desarrollo de Aplicaciones II (integración y microservicios), no este tema, y no se usa como base metodológica. Para el detalle exacto de la implementación se pueden consultar los docstrings instalados de scikit-learn, coherentes con las versiones registradas.
 
-Además, en `app/` se incluye una **aplicación Streamlit** (`streamlit run app/main.py`) que muestra el AED en la página principal y permite **cambiar de modelo** para entrenarlo y evaluarlo con la misma metodología. Su lógica está separada por responsabilidad: `carga`, `limpieza`, `procesamiento`, `aed` y un archivo por modelo en `app/src/modelos/`. Ver `docs/app.md`.
+Además, en `app/` se incluye una **aplicación Streamlit** (`streamlit run app/main.py`) que muestra el AED en la página principal y permite **cambiar de modelo** para entrenarlo y evaluarlo con la misma metodología. Su lógica está separada por responsabilidad: `carga`, `limpieza`, `fe`, `procesamiento`, `aed` y un archivo por modelo en `app/src/modelos/`. Ver `app/README.md`.
 
 La notebook, la app y la guía oral constituyen soporte para la exposición. Quedan a cargo del grupo la revisión personal y entregar el código y soporte en WebCampus.
