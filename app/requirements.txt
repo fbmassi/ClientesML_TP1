@@ -1,7 +1,9 @@
-# App Streamlit TP1 — Churn Cliente
-streamlit>=1.30
-pandas>=2.0
-numpy>=1.24
+# App Streamlit TP1 — Churn Cliente.
+# Versiones numéricas alineadas con requirements.txt (raíz, ejecución verificada).
+# streamlit reciente: la app usa width='stretch' (API nueva), incompatible con 1.56.
+streamlit>=1.66
+pandas==3.0.6
+numpy==2.5.4
+scipy==1.18.1
 scikit-learn==1.9.1
-scipy>=1.11
-matplotlib>=3.7
+matplotlib==3.11.2

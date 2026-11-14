@@ -1,0 +1,2 @@
+# Mantener el PDF intacto al versionarlo en Windows (sin conversión de saltos de línea).
+*.pdf binary

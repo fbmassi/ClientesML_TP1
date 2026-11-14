@@ -17,6 +17,7 @@ __pycache__/
 .jupyter/
 .cache/
 .tmp/
+.pytest_cache/
 
 # IDE
 .vscode/
@@ -26,6 +27,8 @@ __pycache__/
 # macOS / Windows
 .DS_Store
 Thumbs.db
+__MACOSX/
+._*
 
 # Datos: se versiona Cliente.csv (dataset público Telco Churn) para que el deploy
 # arranque solo; el resto de CSV y los materiales originales quedan fuera.
