@@ -1,10 +1,10 @@
 # App Streamlit — TP1 Churn de Clientes
 
-Complemento opcional para mostrar el AED y reproducir cada uno de los cuatro modelos del experimento base. La notebook sigue siendo el soporte académico principal. La opción FE conserva los experimentos exploratorios posteriores del compañero, desactivada por defecto.
+Complemento opcional para mostrar el AED y reproducir cada uno de los cuatro modelos del experimento base. La notebook sigue siendo el soporte académico principal. La opción FE permite reproducir experimentos exploratorios posteriores y está desactivada por defecto.
 
 ## Ejecutar en Windows 11
 
-Usar Python **3.13 de 64 bits**, sin reutilizar un entorno copiado de otra computadora. Desde la raíz de `ClientesML_TP1` (la carpeta que contiene `experimento.py`):
+Usar Python **3.13 de 64 bits**, sin reutilizar un entorno copiado de otra computadora. Desde la carpeta que contiene `experimento.py`:
 
 ```powershell
 py -3.13 -m venv .venv
@@ -46,4 +46,4 @@ Al cambiar el CSV local, la app vuelve a leer los datos; la caché de entrenamie
 
 ## Estructura
 
-`main.py` contiene la interfaz. `src/` conserva los módulos de carga, limpieza, ingeniería de características, procesamiento, AED y un archivo por modelo. Las correcciones documentales no cambian estimadores, hiperparámetros, particiones ni transformaciones aprendidas.
+`main.py` contiene la interfaz. `src/` conserva los módulos de carga, limpieza, ingeniería de características, procesamiento, AED y un archivo por modelo.

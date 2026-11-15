@@ -4,7 +4,7 @@ Este directorio debe contener `Cliente.csv`. El CSV se excluye de Git y debe obt
 
 1. Obtener de WebCampus/cátedra el ZIP original `TP 1 - Machine Learning.zip`.
 2. Ubicarlo en `_materiales_locales/`, dentro de la raíz del repositorio (también excluido de Git).
-3. Desde la raíz de `ClientesML_TP1`, ejecutar `.\.venv\Scripts\python.exe preparar_datos.py` en PowerShell, después de instalar las dependencias.
+3. Desde la carpeta que contiene `experimento.py`, ejecutar `.\.venv\Scripts\python.exe preparar_datos.py` en PowerShell, después de instalar las dependencias.
 
 Para otra ubicación, en PowerShell: `.\.venv\Scripts\python.exe preparar_datos.py --zip "C:\ruta\TP 1 - Machine Learning.zip"`.
 
